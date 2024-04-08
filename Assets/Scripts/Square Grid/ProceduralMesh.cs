@@ -1,17 +1,29 @@
 using ProceduralMeshes;
 using ProceduralMeshes.Generators;
 using ProceduralMeshes.Streams;
+
 using UnityEngine;
 using Unity.Rendering;
-using System.Reflection.Emit;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralMesh : MonoBehaviour
 {
-    [SerializeField, Range(1,10)]
+    [SerializeField, Range(1,50)]
     int resolution = 1;
     Mesh mesh;
 
+    static MeshJobScheduleDelegate[] jobs =
+    {
+        MeshJob<SquareGrid, SingleStream>.ScheduleParallel,
+        MeshJob<SharedSquareGrid, SingleStream>.ScheduleParallel
+    };
+
+    public enum MeshType
+    {
+        SquareGrid, SharedSquareGrid
+    };
+    [SerializeField]
+    MeshType meshType;
     private void Awake()
     {
         mesh = new Mesh {  name = "Procedural Mesh" };
@@ -30,7 +42,7 @@ public class ProceduralMesh : MonoBehaviour
         Mesh.MeshData meshdata = meshDataArray[0];
         // simply replace Multistream with SingleStream
         // to change MeshStream implementation
-        MeshJob<SquareGrid, MultiStream>.ScheduleParallel(mesh,meshdata,resolution, default).Complete(); 
+        jobs[(int)meshType](mesh, meshdata, resolution, default).Complete();
         Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, mesh);
     }
 }

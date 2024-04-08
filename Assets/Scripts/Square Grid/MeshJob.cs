@@ -13,7 +13,6 @@ namespace ProceduralMeshes
         [WriteOnly]
         S streams;
         public void Execute(int i) => generator.Execute(i, streams);
-
         public static JobHandle ScheduleParallel(
             Mesh mesh,Mesh.MeshData meshdata,int resolution, JobHandle dependency)
         {
@@ -27,5 +26,6 @@ namespace ProceduralMeshes
         }
     }
 
-
+    public delegate JobHandle MeshJobScheduleDelegate(
+               Mesh mesh, Mesh.MeshData meshdata, int resolution, JobHandle dependency);
 }
