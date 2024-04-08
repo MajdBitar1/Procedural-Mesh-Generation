@@ -35,8 +35,8 @@ namespace ProceduralMeshes.Generators
                 streams.SetVertex(vi, vertex);
                 if (z > 0)
                 {
-                    streams.SetTrinagle(ti + 0, vi + int3(-Resolution - 2, -1, -Resolution - 1));
-                    streams.SetTrinagle(ti + 1, vi + int3(-Resolution - 1, -1, 0));
+                    streams.SetTriangle(ti + 0, vi + int3(-Resolution - 2, -1, -Resolution - 1));
+                    streams.SetTriangle(ti + 1, vi + int3(-Resolution - 1, -1, 0));
                 }
             }
         }

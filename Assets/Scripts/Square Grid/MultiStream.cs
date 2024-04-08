@@ -56,7 +56,7 @@ namespace ProceduralMeshes.Streams
             stream3[index] = vertex.uv0;
         }
 
-        public void SetTrinagle (int index, int3 triangle) => triangles[index] = triangle;
+        public void SetTriangle (int index, int3 triangle) => triangles[index] = triangle;
     
     }
 }

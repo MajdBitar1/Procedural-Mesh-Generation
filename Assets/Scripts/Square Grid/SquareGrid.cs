@@ -45,8 +45,8 @@ namespace ProceduralMeshes.Generators
                 vertex.uv0 = 1f;
                 streams.SetVertex(vi + 3, vertex);
 
-                streams.SetTrinagle(ti + 0, vi + int3(0, 2, 1));
-                streams.SetTrinagle(ti + 1, vi + int3(1, 2, 3));
+                streams.SetTriangle(ti + 0, vi + int3(0, 2, 1));
+                streams.SetTriangle(ti + 1, vi + int3(1, 2, 3));
             }
         }
         public Bounds Bounds => new Bounds(Vector3.zero, new Vector3(1f,0f,1f));
