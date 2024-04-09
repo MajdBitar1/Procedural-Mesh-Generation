@@ -20,11 +20,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MeshShaderMat
+  m_Name: RippleMeshShaderMat
   m_Shader: {fileID: -6465566751694194690, guid: 0ea964315c8891746ae16e21e4e1b059, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ENABLERIPPLE
   m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
@@ -59,12 +60,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _Amplitude: 0.1
-    - _ENABLERIPPLE: 0
-    - _Period: 2
+    - _ENABLERIPPLE: 1
+    - _Period: 2.57
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Speed: 0.1
+    - _Speed: 0.274
     m_Colors:
-    - _Origin: {r: -1, g: 0, b: 1, a: 0}
+    - _Origin: {r: 0, g: 0, b: 0, a: 0}
     - _Position: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
