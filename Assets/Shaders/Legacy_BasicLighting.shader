@@ -1,15 +1,17 @@
-Shader "Unlit/BasicLightShader"
+Shader "Custom/BasicLighting"
 {
     Properties
     {
         _Tint ("Tint", Color) = (1,1,1,1)
+        _FresGlow ("Fresnel Glow", Color) = (0,0,1,1)
         _Maintex ("Texture", 2D) = "white" {}
+        _Gloss ("Gloss", Range(0,1)) = 0.5
         }
     SubShader
     {
         Pass {
             Tags {
-                "LightMode" = "UniversalForward"
+                "RenderType" = "Opaque"
                 }
             CGPROGRAM
             #pragma vertex MyVertexProgram
@@ -17,7 +19,10 @@ Shader "Unlit/BasicLightShader"
             #include "UnityCG.cginc"
             #include "UnityStandardBRDF.cginc"
             #include "UnityShaderVariables.cginc"
+            #include "AutoLight.cginc"
             float4 _Tint;
+            float4 _FresGlow;
+            float _Gloss;
             sampler2D _Maintex;
             float4 _Maintex_ST;
             
@@ -33,6 +38,7 @@ Shader "Unlit/BasicLightShader"
                 float4 position : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normal : TEXCOORD1;
+                float3 worldPos: TEXCOORD2;
             };
 
             fraginput MyVertexProgram(vertexinput input)
@@ -47,6 +53,7 @@ Shader "Unlit/BasicLightShader"
                 // output.normal = mul((float3x3)unity_ObjectToWorld, v.normal);
                 // unity will eliminate any multiplication with 0
                 output.normal = normalize(output.normal);
+                output.worldPos = mul(unity_ObjectToWorld, input.position).xyz;
 
                 
                 return output;
@@ -59,8 +66,31 @@ Shader "Unlit/BasicLightShader"
                 // the error is usually low, so for performance reasons you can skip this step
 
                 // TO GET DIFFUSE LIGHT: LAMBERT'S COSINE LAW, WE NEED NORMAL AND DIRECTION OF LIGHT AND COMPUTE DOT PRODUCT
-                float3 lightDir = _WorldSpaceLightPos0.xyz;
-                return  DotClamped(lightDir, input.normal);
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                float3 lightColor = _LightColor0.rgb;
+                float3 albedo = tex2D(_Maintex, input.uv).rgb * _Tint.rgb;
+                float3 lambert =  DotClamped(lightDir,input.normal);
+                float3 diffuse = albedo * lightColor * lambert;
+
+                //Specular LIGHT
+                float3 viewDir = normalize(_WorldSpaceCameraPos - input.worldPos);
+
+                float3 halfvector = normalize(lightDir + viewDir);
+                //float3 ReflectedLight = reflect(-lightDir, input.normal); // uses Phong
+                float3 specularlight = DotClamped( halfvector, input.normal) * (lambert > 0 );
+                //specular exponent
+                float specularExponent = exp2(_Gloss * 6) + 2;
+                specularlight = pow(specularlight, specularExponent); 
+                specularlight *= _LightColor0.rgb;
+
+
+                //Fresnel Effect!
+                float fresnel = DotClamped(viewDir, input.normal); // This produces Brighter Center and darker Edges
+                // For Darker Center and Ligher Edges use 1 - fresnel
+
+                float3 effect = ( (1-fresnel) * (cos(_Time.y) + 1) * 0.5) * _FresGlow.rgb;
+
+                return float4( diffuse + specularlight + effect,1);
             }
             ENDCG
             }
