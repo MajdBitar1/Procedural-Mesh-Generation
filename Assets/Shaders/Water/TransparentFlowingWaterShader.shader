@@ -1,4 +1,4 @@
-Shader "Custom/FlowingWaterShader"
+Shader "Custom/TransparentFlowingWaterShader"
 {
     Properties
     {
@@ -18,16 +18,15 @@ Shader "Custom/FlowingWaterShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 200
 
         CGPROGRAM
-        #pragma surface surf Standard fullforwardshadows
+        #pragma surface surf Standard alpha
         #pragma target 3.0
 
         #pragma shader_feature _DUAL_GRID
         #include "Flow.cginc"
-
         sampler2D _MainTex,_FlowMap;
         float _Tiling,_TilingModulated, _GridResolution;
         float _Speed,_FlowStrength;
@@ -101,6 +100,7 @@ Shader "Custom/FlowingWaterShader"
 
             fixed4 c = dh.z * dh.z * _Color ;
             o.Albedo = c.rgb;
+
             o.Normal = normalize(float3(-dh.xy,1));
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
@@ -108,5 +108,4 @@ Shader "Custom/FlowingWaterShader"
         }
         ENDCG
     }
-    FallBack "Diffuse"
 }
